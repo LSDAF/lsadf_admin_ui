@@ -1,6 +1,6 @@
 import simpleRestProvider from "ra-data-simple-rest";
 import { keycloak } from "./auth/keycloakAuthProvider";
-import { fetchUtils } from "react-admin";
+import {DataProvider, fetchUtils} from "react-admin";
 
 // Create a custom httpClient that includes authentication headers
 const httpClient = (url: string, options: fetchUtils.Options = {}) => {
@@ -19,7 +19,7 @@ const httpClient = (url: string, options: fetchUtils.Options = {}) => {
   return fetchUtils.fetchJson(url, options);
 };
 
-export const dataProvider = simpleRestProvider(
+export const dataProvider: DataProvider = simpleRestProvider(
   import.meta.env.VITE_SIMPLE_REST_URL,
   httpClient,
 );
