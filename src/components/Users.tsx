@@ -2,7 +2,6 @@ import {
   List,
   Datagrid,
   TextField,
-  EmailField,
   BooleanField,
   DateField,
   EditButton,
@@ -18,11 +17,30 @@ import {
   ExportButton,
   CreateButton,
   useRecordContext,
+  FilterButton,
+  SelectInput,
 } from "react-admin";
+
+// User property filters matching Java Filter structure
+const UserFilters = [
+  <TextInput key="id" source="filters.id" label="ID" />,
+  <TextInput key="username" label="Username" source="filters.username" />,
+  <TextInput key="first_name" label="First Name" source="filters.firstName" />,
+  <TextInput key="last_name" label="Last Name" source="filters.lastName" />,
+  <SelectInput
+    key="enabled"
+    label="Enabled"
+    source="filters.enabled"
+    choices={[
+      { id: "true", name: "Enabled" },
+      { id: "false", name: "Disabled" },
+    ]}
+  />,
+];
 
 const UserListActions = () => (
   <TopToolbar>
-    {/*<FilterButton />*/}
+    <FilterButton />
     <CreateButton />
     <ExportButton />
   </TopToolbar>
@@ -41,7 +59,7 @@ const UserTitle = () => {
 };
 
 export const UserList = () => (
-  <List actions={<UserListActions />}>
+  <List filters={UserFilters} actions={<UserListActions />}>
     <Datagrid rowClick="show">
       <TextField source="id" />
       <TextField source="username" />

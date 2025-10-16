@@ -11,12 +11,8 @@ import {
   extractApiResponseData,
   transformJavaResponse,
 } from "../../utils/responseMapper";
-import {
-  UserResponse,
-  AdminUserCreationRequest,
-  AdminUserUpdateRequest,
-  SearchRequest,
-} from "../../types/api";
+import { UserResponse, SearchRequest, Filter } from "../../types/api";
+import { toSnakeCase } from "../../utils/requestMapper.ts";
 
 const API_URL = import.meta.env.VITE_SIMPLE_REST_URL;
 
@@ -35,8 +31,47 @@ const httpClient = (url: string, options: fetchUtils.Options = {}) => {
 
 const buildSortQuery = (sort?: { field: string; order: string }): string => {
   if (!sort) return "";
+  const field = sort.field;
+  const snakeCaseField = toSnakeCase(field).toUpperCase();
   const direction = sort.order === "DESC" ? "_DESC" : "";
-  return `order_by=${sort.field}${direction}`;
+  return `order_by=${snakeCaseField}${direction}`;
+};
+
+// Transform React Admin filters to Java Filter structure
+
+const transformFiltersToJavaFormat = (
+  filters: Record<string, any>,
+): Filter[] => {
+  const javaFilters: Filter[] = [];
+
+  // Handle nested filters object from React Admin
+  if (filters.filters) {
+    Object.entries(filters.filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        javaFilters.push({
+          type: key,
+          value: String(value),
+        });
+      }
+    });
+  }
+
+  // Handle direct filter properties
+  Object.entries(filters).forEach(([key, value]) => {
+    if (
+      key !== "filters" &&
+      value !== undefined &&
+      value !== null &&
+      value !== ""
+    ) {
+      javaFilters.push({
+        type: key,
+        value: String(value),
+      });
+    }
+  });
+
+  return javaFilters;
 };
 
 export const usersResource = {
@@ -46,10 +81,15 @@ export const usersResource = {
     // Use search endpoint if filters are provided
     if (filter && Object.keys(filter).length > 0) {
       const sortQuery = buildSortQuery(sort);
-      const searchUrl = `${API_URL}/admin/search/users${sortQuery ? `?${sortQuery}` : ""}`;
+      const searchUrl = `${API_URL}/admin/search/users${
+        sortQuery ? `?${sortQuery}` : ""
+      }`;
 
+      // Transform filters to Java Filter structure
+      const javaFilters = transformFiltersToJavaFormat(filter);
+      console.log({ javaFilters });
       const searchRequest: SearchRequest = {
-        searchTerms: filter,
+        filters: javaFilters,
       };
 
       const { json } = await httpClient(searchUrl, {
@@ -58,7 +98,7 @@ export const usersResource = {
       });
       console.log({ json });
       const data = extractApiResponseData<UserResponse[]>(json);
-      const transformedData = transformJavaResponse(data);
+      const transformedData = transformJavaResponse(data) as UserResponse[];
 
       return {
         data: transformedData,
@@ -72,7 +112,7 @@ export const usersResource = {
 
     const { json } = await httpClient(url);
     const data = extractApiResponseData<UserResponse[]>(json);
-    const transformedData = transformJavaResponse(data);
+    const transformedData = transformJavaResponse(data) as UserResponse[];
 
     return {
       data: transformedData,
@@ -84,7 +124,7 @@ export const usersResource = {
     const url = `${API_URL}/admin/user/id/${params.id}`;
     const { json } = await httpClient(url);
     const data = extractApiResponseData<UserResponse>(json);
-    const transformedData = transformJavaResponse(data);
+    const transformedData = transformJavaResponse(data) as UserResponse;
 
     return { data: transformedData };
   },
@@ -96,7 +136,7 @@ export const usersResource = {
       body: JSON.stringify(params.data),
     });
     const data = extractApiResponseData<UserResponse>(json);
-    const transformedData = transformJavaResponse(data);
+    const transformedData = transformJavaResponse(data) as UserResponse;
 
     return { data: transformedData };
   },
@@ -108,7 +148,7 @@ export const usersResource = {
       body: JSON.stringify(params.data),
     });
     const data = extractApiResponseData<UserResponse>(json);
-    const transformedData = transformJavaResponse(data);
+    const transformedData = transformJavaResponse(data) as UserResponse;
 
     return { data: transformedData };
   },

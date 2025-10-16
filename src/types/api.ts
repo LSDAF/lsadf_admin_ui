@@ -1,4 +1,11 @@
 // API Response types matching the Java backend structure
+import {
+  Characteristics,
+  Currency,
+  GameMetadata,
+  Stage,
+} from "../model/GameSave.ts";
+
 export interface ApiResponse<T> {
   data: T;
   status: number;
@@ -34,31 +41,12 @@ export interface AdminUserUpdateRequest {
   enabled?: boolean;
 }
 
-// Game Save types
+// Game Save Types
 export interface GameSaveResponse {
-  id: string;
-  name: string;
-  username: string;
-  gold: number;
-  healthPoints: number;
-  attack: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface AdminGameSaveCreationRequest {
-  name: string;
-  username: string;
-  gold?: number;
-  healthPoints?: number;
-  attack?: number;
-}
-
-export interface AdminGameSaveUpdateRequest {
-  name?: string;
-  gold?: number;
-  healthPoints?: number;
-  attack?: number;
+  metadata: GameMetadata;
+  characteristics: Characteristics;
+  currency: Currency;
+  stage: Stage;
 }
 
 // Inventory types
@@ -66,6 +54,7 @@ export interface ItemResponse {
   clientId: string;
   itemType: string;
   quantity: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   characteristics?: Record<string, any>;
 }
 
@@ -73,11 +62,17 @@ export interface ItemRequest {
   clientId: string;
   itemType: string;
   quantity: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   characteristics?: Record<string, any>;
+}
+
+// Java Filter structure matching backend
+export interface Filter {
+  type: string;
+  value: string;
 }
 
 // Search types
 export interface SearchRequest {
-  searchTerms?: Record<string, any>;
-  filters?: Record<string, any>;
+  filters?: Filter[];
 }
