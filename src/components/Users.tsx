@@ -47,7 +47,6 @@ export const UserList = () => (
       <TextField source="username" />
       <TextField source="firstName" />
       <TextField source="lastName" />
-      <EmailField source="email" />
       <BooleanField source="enabled" />
       <DateField source="createdAt" showTime />
       <DateField source="updatedAt" showTime />
@@ -64,7 +63,6 @@ export const UserShow = () => (
       <TextField source="username" />
       <TextField source="firstName" />
       <TextField source="lastName" />
-      <EmailField source="email" />
       <BooleanField source="enabled" />
       <DateField source="createdAt" showTime />
       <DateField source="updatedAt" showTime />
@@ -75,10 +73,9 @@ export const UserShow = () => (
 export const UserCreate = () => (
   <Create>
     <SimpleForm>
-      <TextInput source="username" required />
+      <TextInput source="username" type="email" required />
       <TextInput source="firstName" />
       <TextInput source="lastName" />
-      <TextInput source="email" type="email" required />
       <BooleanInput source="enabled" defaultValue={true} />
     </SimpleForm>
   </Create>
@@ -89,7 +86,6 @@ export const UserEdit = () => (
     <SimpleForm>
       <TextInput source="firstName" />
       <TextInput source="lastName" />
-      <TextInput source="email" type="email" required />
       <BooleanInput source="enabled" />
     </SimpleForm>
   </Edit>
