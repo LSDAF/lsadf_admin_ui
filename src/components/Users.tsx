@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   List,
   Datagrid,
@@ -17,10 +16,9 @@ import {
   SimpleShowLayout,
   TopToolbar,
   ExportButton,
-  FilterButton,
   CreateButton,
   useRecordContext,
-} from 'react-admin';
+} from "react-admin";
 
 const UserListActions = () => (
   <TopToolbar>
@@ -36,6 +34,11 @@ const UserShowActions = () => (
     <DeleteButton />
   </TopToolbar>
 );
+
+const UserTitle = () => {
+  const record = useRecordContext();
+  return <span>{record ? "User ID: " + record.username : ""}</span>;
+};
 
 export const UserList = () => (
   <List actions={<UserListActions />}>
@@ -55,7 +58,7 @@ export const UserList = () => (
 );
 
 export const UserShow = () => (
-  <Show actions={<UserShowActions />}>
+  <Show actions={<UserShowActions />} title={<UserTitle />}>
     <SimpleShowLayout>
       <TextField source="id" />
       <TextField source="username" />
