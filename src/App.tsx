@@ -1,37 +1,40 @@
-import {
-  Admin,
-  Resource,
-  ListGuesser,
-  EditGuesser,
-  ShowGuesser,
-} from "react-admin";
-import { Layout } from "./Layout";
+import { Admin, Resource } from "react-admin";
 import { dataProvider } from "./dataProvider";
 import { authProvider } from "./auth/keycloakAuthProvider";
+import { Layout } from "./Layout";
+import { UserList, UserShow, UserCreate, UserEdit } from "./components/Users";
+import {
+  GameSaveList,
+  GameSaveCreate,
+  GameSaveEdit,
+} from "./components/GameSaves";
+import { GameSaveShow } from "./components/GameSaveShow";
+import PersonIcon from "@mui/icons-material/Person";
+import GamepadIcon from "@mui/icons-material/Gamepad";
 
-export const App = () => (
+const App = () => (
   <Admin
-    layout={Layout}
     dataProvider={dataProvider}
     authProvider={authProvider}
+    layout={Layout}
   >
     <Resource
-      name="game_save"
-      list={ListGuesser}
-      edit={EditGuesser}
-      show={ShowGuesser}
+      name="users"
+      list={UserList}
+      show={UserShow}
+      create={UserCreate}
+      edit={UserEdit}
+      icon={PersonIcon}
     />
     <Resource
-      name="session"
-      list={ListGuesser}
-      edit={EditGuesser}
-      show={ShowGuesser}
-    />
-    <Resource
-      name="user"
-      list={ListGuesser}
-      edit={EditGuesser}
-      show={ShowGuesser}
+      name="gameSaves"
+      list={GameSaveList}
+      show={GameSaveShow}
+      create={GameSaveCreate}
+      edit={GameSaveEdit}
+      icon={GamepadIcon}
     />
   </Admin>
 );
+
+export default App;

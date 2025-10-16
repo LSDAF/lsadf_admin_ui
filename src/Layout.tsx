@@ -1,27 +1,16 @@
-import type { ReactNode } from "react";
-import {
-  Layout as RALayout,
-  CheckForApplicationUpdate,
-  AppBar,
-  UserMenu,
-  Logout,
-} from "react-admin";
-import { Typography } from "@mui/material";
+import { AppBar, Layout as RALayout, TitlePortal } from "react-admin";
+import { Box, Typography } from "@mui/material";
 
 const CustomAppBar = () => (
   <AppBar>
-    <Typography variant="h6" id="react-admin-title" sx={{ flex: 1 }}>
+    <TitlePortal />
+    <Box flex="1" />
+    <Typography variant="h6" color="inherit" sx={{ mr: 2 }}>
       LSADF Admin
     </Typography>
-    <UserMenu>
-      <Logout />
-    </UserMenu>
   </AppBar>
 );
 
-export const Layout = ({ children }: { children: ReactNode }) => (
-  <RALayout appBar={CustomAppBar}>
-    {children}
-    <CheckForApplicationUpdate />
-  </RALayout>
+export const Layout = (props: any) => (
+  <RALayout {...props} appBar={CustomAppBar} />
 );
