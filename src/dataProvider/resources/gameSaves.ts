@@ -17,8 +17,8 @@ const httpClient = (url: string, options: fetchUtils.Options = {}) => {
 
 const buildSortQuery = (sort?: { field: string; order: string }): string => {
   if (!sort) return '';
-  const direction = sort.order === 'DESC' ? 'desc' : 'asc';
-  return `orderBy=${sort.field}:${direction}`;
+    const direction = sort.order === "DESC" ? "_DESC" : "";
+    return `order_by=${sort.field}${direction}`;
 };
 
 export const gameSavesResource = {
