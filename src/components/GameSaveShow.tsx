@@ -1,4 +1,4 @@
-    import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Show,
   SimpleShowLayout,
@@ -11,7 +11,7 @@ import {
   TopToolbar,
   EditButton,
   DeleteButton,
-} from 'react-admin';
+} from "react-admin";
 import {
   Card,
   CardContent,
@@ -33,9 +33,15 @@ import {
   Box,
   Tabs,
   Tab,
-} from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon, Clear as ClearIcon } from '@mui/icons-material';
-import { ItemResponse, ItemRequest } from '../types/api';
+} from "@mui/material";
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Clear as ClearIcon,
+} from "@mui/icons-material";
+import { ItemResponse, ItemRequest } from "../types/api";
+import { inventoryResource } from "../dataProvider/resources/inventory.ts";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -54,11 +60,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -84,8 +86,8 @@ export const GameSaveShow = () => {
 
   // Form states
   const [newItem, setNewItem] = useState<ItemRequest>({
-    clientId: '',
-    itemType: '',
+    clientId: "",
+    itemType: "",
     quantity: 1,
     characteristics: {},
   });
@@ -107,7 +109,9 @@ export const GameSaveShow = () => {
       const items = await inventoryResource.getInventory(record.id);
       setInventory(Array.isArray(items) ? items : []);
     } catch (err) {
-      setInventoryError(err instanceof Error ? err.message : 'Failed to load inventory');
+      setInventoryError(
+        err instanceof Error ? err.message : "Failed to load inventory",
+      );
       setInventory([]);
     } finally {
       setInventoryLoading(false);
@@ -120,10 +124,17 @@ export const GameSaveShow = () => {
     try {
       await inventoryResource.createItem(record.id, newItem);
       setAddDialogOpen(false);
-      setNewItem({ clientId: '', itemType: '', quantity: 1, characteristics: {} });
+      setNewItem({
+        clientId: "",
+        itemType: "",
+        quantity: 1,
+        characteristics: {},
+      });
       await loadInventory();
     } catch (err) {
-      setInventoryError(err instanceof Error ? err.message : 'Failed to add item');
+      setInventoryError(
+        err instanceof Error ? err.message : "Failed to add item",
+      );
     }
   };
 
@@ -141,33 +152,40 @@ export const GameSaveShow = () => {
       setSelectedItem(null);
       await loadInventory();
     } catch (err) {
-      setInventoryError(err instanceof Error ? err.message : 'Failed to update item');
+      setInventoryError(
+        err instanceof Error ? err.message : "Failed to update item",
+      );
     }
   };
 
   const handleDeleteItem = async (clientId: string) => {
     if (!record?.id) return;
 
-    if (!window.confirm('Are you sure you want to delete this item?')) return;
+    if (!window.confirm("Are you sure you want to delete this item?")) return;
 
     try {
       await inventoryResource.deleteItem(record.id, clientId);
       await loadInventory();
     } catch (err) {
-      setInventoryError(err instanceof Error ? err.message : 'Failed to delete item');
+      setInventoryError(
+        err instanceof Error ? err.message : "Failed to delete item",
+      );
     }
   };
 
   const handleClearInventory = async () => {
     if (!record?.id) return;
 
-    if (!window.confirm('Are you sure you want to clear the entire inventory?')) return;
+    if (!window.confirm("Are you sure you want to clear the entire inventory?"))
+      return;
 
     try {
       await inventoryResource.clearInventory(record.id);
       await loadInventory();
     } catch (err) {
-      setInventoryError(err instanceof Error ? err.message : 'Failed to clear inventory');
+      setInventoryError(
+        err instanceof Error ? err.message : "Failed to clear inventory",
+      );
     }
   };
 
@@ -176,8 +194,11 @@ export const GameSaveShow = () => {
 
   return (
     <Show actions={<GameSaveShowActions />}>
-      <Box sx={{ width: '100%' }}>
-        <Tabs value={tabValue} onChange={(_, newValue) => setTabValue(newValue)}>
+      <Box sx={{ width: "100%" }}>
+        <Tabs
+          value={tabValue}
+          onChange={(_, newValue) => setTabValue(newValue)}
+        >
           <Tab label="Game Save Details" />
           <Tab label="Inventory" />
         </Tabs>
@@ -198,7 +219,12 @@ export const GameSaveShow = () => {
         <TabPanel value={tabValue} index={1}>
           <Card>
             <CardContent>
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={2}
+              >
                 <Typography variant="h6">Inventory Items</Typography>
                 <Box>
                   <Button
@@ -255,7 +281,9 @@ export const GameSaveShow = () => {
                             <TableCell>{item.itemType}</TableCell>
                             <TableCell>{item.quantity}</TableCell>
                             <TableCell>
-                              {item.characteristics ? JSON.stringify(item.characteristics) : '-'}
+                              {item.characteristics
+                                ? JSON.stringify(item.characteristics)
+                                : "-"}
                             </TableCell>
                             <TableCell>
                               <Button
@@ -291,7 +319,12 @@ export const GameSaveShow = () => {
       </Box>
 
       {/* Add Item Dialog */}
-      <Dialog open={addDialogOpen} onClose={() => setAddDialogOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={addDialogOpen}
+        onClose={() => setAddDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Add New Item</DialogTitle>
         <DialogContent>
           <MuiTextField
@@ -301,7 +334,9 @@ export const GameSaveShow = () => {
             fullWidth
             variant="outlined"
             value={newItem.clientId}
-            onChange={(e) => setNewItem({ ...newItem, clientId: e.target.value })}
+            onChange={(e) =>
+              setNewItem({ ...newItem, clientId: e.target.value })
+            }
           />
           <MuiTextField
             margin="dense"
@@ -309,7 +344,9 @@ export const GameSaveShow = () => {
             fullWidth
             variant="outlined"
             value={newItem.itemType}
-            onChange={(e) => setNewItem({ ...newItem, itemType: e.target.value })}
+            onChange={(e) =>
+              setNewItem({ ...newItem, itemType: e.target.value })
+            }
           />
           <MuiTextField
             margin="dense"
@@ -318,7 +355,12 @@ export const GameSaveShow = () => {
             fullWidth
             variant="outlined"
             value={newItem.quantity}
-            onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 1 })}
+            onChange={(e) =>
+              setNewItem({
+                ...newItem,
+                quantity: parseInt(e.target.value) || 1,
+              })
+            }
           />
           <MuiTextField
             margin="dense"
@@ -340,12 +382,19 @@ export const GameSaveShow = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setAddDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleAddItem} variant="contained">Add</Button>
+          <Button onClick={handleAddItem} variant="contained">
+            Add
+          </Button>
         </DialogActions>
       </Dialog>
 
       {/* Edit Item Dialog */}
-      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Edit Item</DialogTitle>
         <DialogContent>
           {selectedItem && (
@@ -365,7 +414,9 @@ export const GameSaveShow = () => {
                 fullWidth
                 variant="outlined"
                 value={selectedItem.itemType}
-                onChange={(e) => setSelectedItem({ ...selectedItem, itemType: e.target.value })}
+                onChange={(e) =>
+                  setSelectedItem({ ...selectedItem, itemType: e.target.value })
+                }
               />
               <MuiTextField
                 margin="dense"
@@ -374,7 +425,12 @@ export const GameSaveShow = () => {
                 fullWidth
                 variant="outlined"
                 value={selectedItem.quantity}
-                onChange={(e) => setSelectedItem({ ...selectedItem, quantity: parseInt(e.target.value) || 1 })}
+                onChange={(e) =>
+                  setSelectedItem({
+                    ...selectedItem,
+                    quantity: parseInt(e.target.value) || 1,
+                  })
+                }
               />
               <MuiTextField
                 margin="dense"
@@ -398,7 +454,9 @@ export const GameSaveShow = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleEditItem} variant="contained">Save</Button>
+          <Button onClick={handleEditItem} variant="contained">
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
     </Show>
