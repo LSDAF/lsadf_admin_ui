@@ -2,6 +2,7 @@ import {
   Create,
   CreateButton,
   Datagrid,
+  DateField,
   DeleteButton,
   Edit,
   EditButton,
@@ -11,10 +12,13 @@ import {
   NumberField,
   NumberInput,
   SelectInput,
+  Show,
   SimpleForm,
+  TabbedShowLayout,
   TextField,
   TextInput,
   TopToolbar,
+  useRecordContext,
 } from "react-admin";
 
 // GameSave property filters matching Java Filter structure
@@ -35,9 +39,16 @@ const GameSaveFilters = [
 
 const GameSaveListActions = () => (
   <TopToolbar>
-    {<FilterButton />}
+    <FilterButton />
     <CreateButton />
     <ExportButton />
+  </TopToolbar>
+);
+
+const GameSaveShowActions = () => (
+  <TopToolbar>
+    <EditButton />
+    <DeleteButton />
   </TopToolbar>
 );
 
@@ -86,4 +97,43 @@ export const GameSaveEdit = () => (
       <NumberInput source="attack" />
     </SimpleForm>
   </Edit>
+);
+
+const GameSaveTitle = () => {
+  const record = useRecordContext();
+  return <span>{record ? "Game Save ID: " + record.id : ""}</span>;
+};
+
+export const GameSaveShow = () => (
+  <Show actions={<GameSaveShowActions />} title={<GameSaveTitle />}>
+    <TabbedShowLayout>
+      <TabbedShowLayout.Tab label="Metadata">
+        <div>METADATA</div>
+        <TextField source="metadata.id" />
+        <TextField source="metadata.nickname" />
+        <TextField source="metadata.userEmail" />
+        <DateField source="metadata.createdAt" showTime />
+        <DateField source="metadata.updatedAt" showTime />
+      </TabbedShowLayout.Tab>
+      <TabbedShowLayout.Tab label="Currency">
+        <TextField source="currency.gold" />
+        <TextField source="currency.diamond" />
+        <TextField source="currency.emerald" />
+        <TextField source="currency.amethyst" />
+      </TabbedShowLayout.Tab>
+      <TabbedShowLayout.Tab label="Stage">
+        <TextField source="stage.maxStage" />
+        <TextField source="stage.currentStage" />
+        <TextField source="stage.wave" />
+      </TabbedShowLayout.Tab>
+      <TabbedShowLayout.Tab label="Characteristics">
+        <TextField source="characteristics.attack" />
+        <TextField source="characteristics.health" />
+        <TextField source="characteristics.critChance" />
+        <TextField source="characteristics.critDamage" />
+        <TextField source="characteristics.resistance" />
+      </TabbedShowLayout.Tab>
+      <TabbedShowLayout.Tab label="Inventory">INVENTORY</TabbedShowLayout.Tab>
+    </TabbedShowLayout>
+  </Show>
 );

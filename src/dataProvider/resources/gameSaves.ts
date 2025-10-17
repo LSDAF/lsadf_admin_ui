@@ -4,6 +4,7 @@ import {
   fetchUtils,
   GetListParams,
   GetOneParams,
+  SortPayload,
   UpdateParams,
 } from "react-admin";
 import { keycloak } from "../../auth/keycloakAuthProvider";
@@ -66,10 +67,63 @@ const transformFiltersToJavaFormat = (
 
 const buildSortQuery = (sort?: { field: string; order: string }): string => {
   if (!sort) return "";
-  const field = sort.field.split(".")[1];
+  // if field contains dot, then take the part after the dot else take the whole field
+  const field = sort.field.includes(".")
+    ? sort.field.split(".")[1]
+    : sort.field;
   const snakeCaseField = toSnakeCase(field).toUpperCase();
   const direction = sort.order === "DESC" ? "_DESC" : "";
   return `order_by=${snakeCaseField}${direction}`;
+};
+
+const searchGameSaves = async (sort: SortPayload | undefined, filter: any) => {
+  const sortQuery = buildSortQuery(sort);
+  const searchUrl = `${API_URL}/admin/search/game_saves${sortQuery ? `?${sortQuery}` : ""}`;
+
+  // Transform filters to Java Filter structure
+  const javaFilters = transformFiltersToJavaFormat(filter);
+  console.log({ javaFilters });
+  const searchRequest: SearchRequest = {
+    filters: javaFilters,
+  };
+
+  const { json } = await httpClient(searchUrl, {
+    method: "POST",
+    body: JSON.stringify(searchRequest),
+  });
+
+  const data = extractApiResponseData<GameSaveResponse[]>(json);
+  const transformedData = transformJavaResponse(data);
+
+  const dataWithIds = transformedData.map((item: GameSaveResponse) => ({
+    id: item.metadata.id, // use a fallback if no real id
+    ...item,
+  }));
+
+  return {
+    data: dataWithIds,
+    total: dataWithIds.length,
+  };
+};
+
+const getGameSaves = async (sort: SortPayload | undefined) => {
+  // Regular list endpoint
+  const sortQuery = buildSortQuery(sort);
+  const url = `${API_URL}/admin/game_save${sortQuery ? `?${sortQuery}` : ""}`;
+
+  const { json } = await httpClient(url);
+  const data = extractApiResponseData<GameSaveResponse[]>(json);
+  const transformedData = transformJavaResponse(data);
+
+  const dataWithIds = transformedData.map((item: GameSaveResponse) => ({
+    id: item.metadata.id, // use a fallback if no real id
+    ...item,
+  }));
+
+  return {
+    data: dataWithIds,
+    total: dataWithIds.length,
+  };
 };
 
 export const gameSavesResource = {
@@ -78,52 +132,9 @@ export const gameSavesResource = {
 
     // Use search endpoint if filters are provided
     if (filter && Object.keys(filter).length > 0) {
-      const sortQuery = buildSortQuery(sort);
-      const searchUrl = `${API_URL}/admin/search/game_saves${sortQuery ? `?${sortQuery}` : ""}`;
-
-      // Transform filters to Java Filter structure
-      const javaFilters = transformFiltersToJavaFormat(filter);
-      console.log({ javaFilters });
-      const searchRequest: SearchRequest = {
-        filters: javaFilters,
-      };
-
-      const { json } = await httpClient(searchUrl, {
-        method: "POST",
-        body: JSON.stringify(searchRequest),
-      });
-
-      const data = extractApiResponseData<GameSaveResponse[]>(json);
-      const transformedData = transformJavaResponse(data);
-
-      const dataWithIds = transformedData.map((item: GameSaveResponse) => ({
-        id: item.metadata.id, // use a fallback if no real id
-        ...item,
-      }));
-
-      return {
-        data: dataWithIds,
-        total: dataWithIds.length,
-      };
+      return await searchGameSaves(sort, filter);
     }
-
-    // Regular list endpoint
-    const sortQuery = buildSortQuery(sort);
-    const url = `${API_URL}/admin/game_save${sortQuery ? `?${sortQuery}` : ""}`;
-
-    const { json } = await httpClient(url);
-    const data = extractApiResponseData<GameSaveResponse[]>(json);
-    const transformedData = transformJavaResponse(data);
-
-    const dataWithIds = transformedData.map((item: GameSaveResponse) => ({
-      id: item.metadata.id, // use a fallback if no real id
-      ...item,
-    }));
-
-    return {
-      data: dataWithIds,
-      total: dataWithIds.length,
-    };
+    return await getGameSaves(sort);
   },
 
   getOne: async (params: GetOneParams) => {
@@ -131,7 +142,7 @@ export const gameSavesResource = {
     const { json } = await httpClient(url);
     const data = extractApiResponseData<GameSaveResponse>(json);
     const transformedData = transformJavaResponse(data);
-
+    transformedData.id = transformedData.metadata.id; // Ensure id field is set
     return { data: transformedData };
   },
 
