@@ -13,7 +13,6 @@ export interface ApiResponse<T> {
 }
 
 export const isResponseSuccess = (response: ApiResponse<any>): boolean => {
-  console.log(response);
   return response && response.status == 200;
 };
 

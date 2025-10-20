@@ -27,7 +27,9 @@ export const inventoryResource = {
     const url = `${API_URL}/admin/inventory/${gameSaveId}`;
     const { json } = await httpClient(url);
     const data = extractApiResponseData<ItemResponse[]>(json);
-    return transformJavaResponse(data);
+    const transform = transformJavaResponse(data);
+    console.log({ transform });
+    return transform;
   },
 
   // Create an item in the inventory
