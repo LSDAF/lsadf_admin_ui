@@ -20,6 +20,7 @@ import {
   TopToolbar,
   useRecordContext,
 } from "react-admin";
+import { InventoryComponent } from "./Inventory";
 
 // GameSave property filters matching Java Filter structure
 const GameSaveFilters = [
@@ -133,7 +134,9 @@ export const GameSaveShow = () => (
         <TextField source="characteristics.critDamage" />
         <TextField source="characteristics.resistance" />
       </TabbedShowLayout.Tab>
-      <TabbedShowLayout.Tab label="Inventory">INVENTORY</TabbedShowLayout.Tab>
+      <TabbedShowLayout.Tab label="Inventory">
+        <InventoryComponent />
+      </TabbedShowLayout.Tab>
     </TabbedShowLayout>
   </Show>
 );
