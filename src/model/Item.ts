@@ -8,12 +8,12 @@ export enum ItemType {
 }
 
 export enum ItemRarity {
-  NORMAL = "normal",
-  RARE = "rare",
-  MAGIC = "magic",
-  EPIC = "epic",
-  LEGENDARY = "legendary",
-  MYTHIC = "mythic",
+  NORMAL = "NORMAL",
+  RARE = "RARE",
+  MAGIC = "MAGIC",
+  EPIC = "EPIC",
+  LEGENDARY = "LEGENDARY",
+  MYTHIC = "MYTHIC",
 }
 
 export enum ItemStatistic {
@@ -37,7 +37,7 @@ export interface Item {
   gameSaveId: string;
   clientId: string;
   blueprintId: string;
-  itemType: ItemType;
+  type: ItemType;
   itemRarity: ItemRarity;
   isEquipped: boolean;
   level: number;
